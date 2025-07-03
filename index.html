@@ -1,0 +1,387 @@
+import React, { useState } from 'react';
+
+// Main App component
+const App = () => {
+  // State variables for managing developer mode, secret code input, and profile data
+  const [developerMode, setDeveloperMode] = useState(false);
+  const [secretCodeInput, setSecretCodeInput] = useState('');
+  const [showSecretCodeModal, setShowSecretCodeModal] = useState(false);
+  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+
+  // Profile data for the "People you can follow" section
+  const [profiles, setProfiles] = useState([
+    {
+      id: 1,
+      name: 'Anurag Goswami',
+      description: 'Entrepreneur & Investor',
+      image: 'https://placehold.co/100x100/A020F0/ffffff?text=AG', // Placeholder for Anurag Goswami
+      followed: false,
+    },
+    {
+      id: 2,
+      name: 'Narendra Modi',
+      description: 'Prime Minister of India',
+      image: 'https://placehold.co/100x100/FFA500/ffffff?text=NM', // Placeholder for Narendra Modi
+      followed: false,
+    },
+    {
+      id: 3,
+      name: 'Virat Kohli',
+      description: 'Indian Cricketer',
+      image: 'https://placehold.co/100x100/008000/ffffff?text=VK', // Placeholder for Virat Kohli
+      followed: false,
+    },
+  ]);
+
+  // State for the main Koo English post
+  const [kooPost, setKooPost] = useState({
+    profileImage: 'https://placehold.co/50x50/FFD700/000000?text=K', // Placeholder for Koo logo
+    username: 'Koo English',
+    handle: '@kooen...',
+    date: '19 Feb',
+    content: 'Welcome to the Koo family',
+  });
+
+  // Function to handle profile image change in developer mode
+  const handleProfileImageChange = (id, newImage) => {
+    setProfiles(prevProfiles =>
+      prevProfiles.map(profile =>
+        profile.id === id ? { ...profile, image: newImage } : profile
+      )
+    );
+  };
+
+  // Function to handle Koo logo change in developer mode
+  const handleKooLogoChange = (newImage) => {
+    setKooPost(prevKooPost => ({ ...prevKooPost, profileImage: newImage }));
+  };
+
+  // Function to handle post content change in developer mode
+  const handlePostContentChange = (newContent) => {
+    setKooPost(prevKooPost => ({ ...prevKooPost, content: newContent }));
+  };
+
+  // Function to toggle follow status for a profile
+  const toggleFollow = (id) => {
+    setProfiles(prevProfiles =>
+      prevProfiles.map(profile =>
+        profile.id === id ? { ...profile, followed: !profile.followed } : profile
+      )
+    );
+  };
+
+  // Function to handle secret code submission
+  const handleSecretCodeSubmit = () => {
+    if (secretCodeInput === 'Jai Radhe Krishna 108') {
+      setDeveloperMode(true);
+      setShowSecretCodeModal(false);
+      setSecretCodeInput('');
+    } else {
+      alert('Incorrect secret code. Please try again.');
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center font-inter">
+      {/* Header Section */}
+      <header className="w-full bg-white shadow-sm py-4 px-4 flex items-center justify-between rounded-b-xl">
+        <div className="flex items-center space-x-2">
+          <img
+            src="https://placehold.co/40x40/FFD700/000000?text=U" // User profile placeholder
+            alt="User Profile"
+            className="w-10 h-10 rounded-full"
+          />
+        </div>
+        <div className="flex items-center space-x-4">
+          <img
+            src="https://placehold.co/40x40/FFD700/000000?text=Koo" // Koo logo placeholder
+            alt="Koo Logo"
+            className="w-10 h-10 rounded-full"
+          />
+          <div className="relative">
+            <svg
+              onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+              className="w-6 h-6 text-gray-700 cursor-pointer"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+              ></path>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              ></path>
+            </svg>
+            {showSettingsMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                <button
+                  onClick={() => {
+                    setShowSecretCodeModal(true);
+                    setShowSettingsMenu(false);
+                  }}
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+                >
+                  Activate Developer Mode
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* Secret Code Modal */}
+      {showSecretCodeModal && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-80">
+            <h3 className="text-lg font-semibold mb-4">Enter Secret Code</h3>
+            <input
+              type="password"
+              className="w-full p-2 border border-gray-300 rounded-md mb-4"
+              value={secretCodeInput}
+              onChange={(e) => setSecretCodeInput(e.target.value)}
+              placeholder="Secret Code"
+            />
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setShowSecretCodeModal(false)}
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSecretCodeSubmit}
+                className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Feed Navigation */}
+      <nav className="w-full bg-white py-2 px-4 flex justify-around border-b border-gray-200 rounded-b-xl">
+        <div className="flex flex-col items-center">
+          <span className="font-semibold text-yellow-600">Feed</span>
+          <div className="w-12 h-0.5 bg-yellow-600 mt-1 rounded-full"></div>
+        </div>
+        <div className="flex flex-col items-center">
+          <span className="font-semibold text-gray-500">People</span>
+          <div className="w-12 h-0.5 bg-transparent mt-1"></div>
+        </div>
+      </nav>
+
+      {/* Updated Status */}
+      <div className="w-full bg-yellow-100 text-yellow-800 text-center py-2 text-sm font-medium rounded-b-xl">
+        Updated!
+      </div>
+
+      {/* What's on your mind section */}
+      <div className="w-full bg-white p-4 flex items-center space-x-3 shadow-sm mt-4 rounded-xl">
+        <img
+          src="https://placehold.co/40x40/FFD700/000000?text=U" // User profile placeholder
+          alt="User Profile"
+          className="w-10 h-10 rounded-full"
+        />
+        <input
+          type="text"
+          placeholder="What's on your mind..."
+          className="flex-grow p-2 border border-gray-300 rounded-full focus:outline-none focus:border-yellow-500"
+        />
+        <button className="bg-yellow-500 text-white rounded-full p-2">
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+            ></path>
+          </svg>
+        </button>
+      </div>
+
+      {/* People you can follow section */}
+      <div className="w-full p-4 mt-4 bg-white shadow-sm rounded-xl">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-gray-800">People you can follow</h2>
+          <button className="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold hover:bg-yellow-200">
+            View All
+          </button>
+        </div>
+        <div className="flex overflow-x-auto space-x-4 pb-2">
+          {profiles.map(profile => (
+            <div
+              key={profile.id}
+              className="flex-shrink-0 w-40 bg-white border border-gray-200 rounded-xl shadow-md p-4 flex flex-col items-center text-center"
+            >
+              <img
+                src={profile.image}
+                alt={profile.name}
+                className="w-24 h-24 rounded-full object-cover mb-3 border-2 border-yellow-500"
+              />
+              <h3 className="font-semibold text-gray-900 text-lg mb-1">{profile.name}</h3>
+              <p className="text-gray-600 text-sm mb-3">{profile.description}</p>
+              <button
+                onClick={() => toggleFollow(profile.id)}
+                className={`w-full py-2 rounded-full text-sm font-semibold ${
+                  profile.followed
+                    ? 'bg-gray-200 text-gray-700'
+                    : 'bg-yellow-500 text-white hover:bg-yellow-600'
+                }`}
+              >
+                {profile.followed ? 'Following' : 'Follow'}
+              </button>
+              {developerMode && (
+                <input
+                  type="text"
+                  placeholder="New Image URL"
+                  className="w-full text-xs mt-2 p-1 border border-gray-300 rounded-md"
+                  onBlur={(e) => handleProfileImageChange(profile.id, e.target.value)}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Koo English Post */}
+      <div className="w-full p-4 mt-4 bg-white shadow-sm rounded-xl mb-20">
+        <div className="flex items-start space-x-3 mb-4">
+          <img
+            src={kooPost.profileImage}
+            alt="Koo English Profile"
+            className="w-12 h-12 rounded-full border-2 border-yellow-500"
+          />
+          <div className="flex-grow">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-gray-900">{kooPost.username}</span>
+              <span className="text-gray-500 text-sm">{kooPost.date}</span>
+            </div>
+            <span className="text-gray-600 text-sm">{kooPost.handle}</span>
+            {developerMode && (
+              <input
+                type="text"
+                placeholder="New Koo Logo URL"
+                className="w-full text-xs mt-2 p-1 border border-gray-300 rounded-md"
+                onBlur={(e) => handleKooLogoChange(e.target.value)}
+              />
+            )}
+          </div>
+        </div>
+        {developerMode ? (
+          <textarea
+            className="w-full p-2 border border-gray-300 rounded-md mb-4"
+            value={kooPost.content}
+            onChange={(e) => handlePostContentChange(e.target.value)}
+            rows="3"
+          ></textarea>
+        ) : (
+          <p className="text-gray-800 text-base mb-4">{kooPost.content}</p>
+        )}
+        <div className="flex justify-end">
+          <button className="bg-yellow-500 text-white rounded-full p-3 shadow-lg hover:bg-yellow-600">
+            <svg
+              className="w-8 h-8"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Bottom Navigation */}
+      <footer className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 py-3 px-4 flex justify-around items-center rounded-t-xl">
+        <div className="flex flex-col items-center text-yellow-600">
+          <svg
+            className="w-6 h-6"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+          </svg>
+          <span className="text-xs mt-1">Home</span>
+        </div>
+        <div className="flex flex-col items-center text-gray-500">
+          <svg
+            className="w-6 h-6"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM11 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2h-2zM5 9a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 9a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2z"></path>
+          </svg>
+          <span className="text-xs mt-1">Explore</span>
+        </div>
+        <div className="flex flex-col items-center text-gray-500">
+          <svg
+            className="w-6 h-6"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fillRule="evenodd"
+              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+              clipRule="evenodd"
+            ></path>
+          </svg>
+          <span className="text-xs mt-1">Search</span>
+        </div>
+        <div className="flex flex-col items-center text-gray-500">
+          <svg
+            className="w-6 h-6"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 110-6 3 3 0 010 6z"></path>
+          </svg>
+          <span className="text-xs mt-1">Notifications</span>
+        </div>
+        <div className="flex flex-col items-center text-gray-500">
+          <svg
+            className="w-6 h-6"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fillRule="evenodd"
+              d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.336-3.651A8.061 8.061 0 012 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm6 0h-2v2h2V9z"
+              clipRule="evenodd"
+            ></path>
+          </svg>
+          <span className="text-xs mt-1">Messages</span>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
+
+                
